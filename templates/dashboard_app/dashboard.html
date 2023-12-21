@@ -1,0 +1,50 @@
+<!-- dashboard_app/templates/dashboard.html -->
+<form method="post" action="{% url 'update_preferences' %}">
+    {% csrf_token %}
+    <label>Show API Data<input type="checkbox" name="show_api_data" {% if user_preferences.show_api_data %}checked{% endif %}></label>
+    <br>
+    <label>Filter by Date<input type="checkbox" name="filter_by_date" {% if user_preferences.filter_by_date %}checked{% endif %}></label>
+    <label>Start Date<input type="date" name="start_date" value="{{ user_preferences.start_date }}"></label>
+    <label>End Date<input type="date" name="end_date" value="{{ user_preferences.end_date }}"></label>
+    <br>
+    <label>Sort by Revenue<input type="checkbox" name="sort_by_revenue" {% if user_preferences.sort_by_revenue %}checked{% endif %}></label>
+    <br>
+    <input type="submit" value="Update Preferences">
+</form>
+
+<!-- Display charts and data here -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Example: Display COVID-19 data in a bar chart
+    var covidData = {{ covid_data|safe }};
+    var ctx = document.getElementById('covidChart').getContext('2d');
+    var covidChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Total Cases', 'Recovered', 'Deaths'],
+            datasets: [{
+                label: 'COVID-19 Statistics',
+                data: [covidData.data.summary.total, covidData.data.summary.discharged, covidData.data.summary.deaths],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 205, 86, 0.7)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 205, 86, 1)',
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
